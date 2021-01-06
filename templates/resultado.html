@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="col-md-12">
+    <div class="card card-body">
+        <h3>Resultados</h3>
+        {% if menor == '1' %}
+        <table class="table table-borderless">
+            <tr>
+            {% for nombre in nom_img %}
+                <td>
+                    <img src="../static/img/calificacion/{{nombre}}">
+                </td>
+            {% endfor %}
+            </tr>
+            <tr>
+                {% for resultado in resultados %}
+                    <td><p>{{resultado}}</p> </td>       
+                {% endfor %}
+            </tr>
+        </table>
+        {% else %}
+        <table class="table table-primary table-bordered table-hover table-striped">
+            <thead>
+            {% for nombre in nombres %}
+                <td>{{nombre}}</td>
+            {% endfor %}
+            </thead>
+            <tbody>
+                <tr>
+                {% for total in totales %}
+                    <td>{{total}}%</td>       
+                {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+        {% endif %} 
+    </div>
+</div>
+
+{% endblock %}

@@ -2,11 +2,13 @@ from Util.ReadFile import get_dataFile
 from Util import Plotter
 from Neural_Network.Data import Data
 from Neural_Network.Model import NN_Model
+from genetico import Genetico
 
 ONLY_SHOW = False
 
 # Cargando conjunto de datos
 train_X, train_Y, val_X, val_Y = get_dataFile()
+print(train_X.shape, train_Y.shape)
 
 if ONLY_SHOW:
     Plotter.plot_field_data(train_X, train_Y)
@@ -25,28 +27,36 @@ val_set = Data(val_X, val_Y)
 #capas1 = [Cantidad de variables que tiene el problema, capa 1, capa 2, Capa de salida]
 #se tendría una red neuronal de 3 capas, la capa de entrada NO se toma en cuenta
 #capas1 = [train_set.n, 10, 5, 1]
-capas1 = [train_set.n, 10, 7, 1]
+capas1 = [train_set.n, 10, 6, 3, 1]
 
 # Se define el modelo
-nn1 = NN_Model(train_set, capas1, alpha=0.001, iterations=50000, lambd=0, keep_prob=0.5)
-nn2 = NN_Model(train_set, capas1, alpha=0.01, iterations=50000, lambd=0.7, keep_prob=1)
+#nn1 = NN_Model(train_set, capas1, alpha=0.001, iterations=10000, lambd=0, keep_prob=0.5)
+#nn2 = NN_Model(train_set, capas1, alpha=0.01, iterations=50000, lambd=0.7, keep_prob=1)
+
+#gene = Genetico()
+#hiper = gene.algoritmo()
+
+nn2 = NN_Model(train_set, capas1, alpha=0.005, iterations=1000, lambd=0, keep_prob=0.8)
+#nn2 = NN_Model(train_set, capas1, alpha=hiper[0], iterations=hiper[2], lambd=hiper[1], keep_prob=hiper[3])
 
 # Se entrena el modelo
-nn1.training(False)
+#nn1.training(False)
 nn2.training(False)
 
 # Se analiza el entrenamiento
-Plotter.show_Model([nn1, nn2])
+#Plotter.show_Model([nn1, nn2])
+Plotter.show_Model([nn2])
 
-print('Entrenamiento Modelo 1')
+"""print('Entrenamiento Modelo 1')
 nn1.predict(train_set)
 print('Validacion Modelo 1')
-nn1.predict(val_set)
+nn1.predict(val_set)"""
 
 print('########################')
 print('Entrenamiento Modelo 2')
 nn2.predict(train_set)
 print('Validacion Modelo 2')
 nn2.predict(val_set)
+
 
 

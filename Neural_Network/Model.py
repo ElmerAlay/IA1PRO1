@@ -42,7 +42,6 @@ class NN_Model:
                 if show_cost:
                     print('Iteracion No.', i, 'Costo:', cost, sep=' ')
 
-
     def propagacion_adelante(self, dataSet):
         # Se extraen las entradas
         X = dataSet.x
@@ -96,6 +95,7 @@ class NN_Model:
         dZ = []
         dW = []
         db = []
+        c = 0
 
         temps = list(temp)
         for i in range(self.cant_layers-1,-1, -1):
@@ -108,21 +108,23 @@ class NN_Model:
                 dZi= temps[(i*3)+1] - Y
                 dZ.append(dZi)
             else:
-                dAi = np.dot(W[((self.cant_layers)-1)-(i+1)].T, dZ[i-1])
+                dAi = np.dot(W[(self.cant_layers-1)-(i+1)].T, dZ[c])
                 dAi *= temps[(i*3)+2]
                 dAi /= self.kp
                 dA.append(dAi)
 
                 dZi = np.multiply(dAi,np.int64(temps[(i*3)+1]>0))
                 dZ.append(dZi)
+
+                c+=1
                 
             if i==0:
-                dWi = 1. / m * np.dot(dZi, X.T) + (self.lambd/m) * W[((self.cant_layers)-1)-i]
+                dWi = (1. / m) * np.dot(dZi, X.T) + (self.lambd/m) * W[((self.cant_layers)-1)-i]
             else:
-                dWi = 1. / m * np.dot(dZi, temps[((i-1)*3)+1].T) + (self.lambd/m) * W[((self.cant_layers)-1)-i]
+                dWi = (1. / m) * np.dot(dZi, temps[((i-1)*3)+1].T) + (self.lambd/m) * W[((self.cant_layers)-1)-i]
             dW.append(dWi)
 
-            db.append(1. / m * np.sum(dZi, axis=1, keepdims=True))
+            db.append((1. / m) * np.sum(dZi, axis=1, keepdims=True))
         
         gradientes = {}
         gradientes["dZ"+str(len(dZ))] = dZ[0]
@@ -167,11 +169,14 @@ class NN_Model:
         # Propagacion hacia adelante
         y_hat, temp = self.propagacion_adelante(dataSet)
         # Convertir probabilidad
+        resultado = 0
         for i in range(0, m):
             p[0, i] = 1 if y_hat[0, i] > 0.5 else 0
+            resultado = 1 if y_hat[0, i] > 0.5 else 0
+        
         exactitud = np.mean((p[0, :] == Y[0, ]))
         print("Exactitud: " + str(exactitud))
-        return exactitud
+        return exactitud, resultado
 
 
     def activation_function(self, name, x):
